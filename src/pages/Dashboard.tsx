@@ -279,6 +279,7 @@ ${Object.entries(result.entities).map(([key, values]) => `
             </div>
           </motion.div>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <span className="text-xs text-muted-foreground hidden sm:block">{user.email}</span>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground gap-2">
