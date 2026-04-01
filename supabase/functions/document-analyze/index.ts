@@ -364,12 +364,15 @@ async function extractXMLFromZip(zipBytes: Uint8Array, targetFile: string): Prom
 function buildAIMessages(extractedText: string, fileName: string, isImage: boolean, fileBase64: string) {
   const systemPrompt = `You are an expert document analysis AI. Your task is to analyze documents and extract:
 1. A concise, accurate summary of the document content
-2. Named entities: person names, dates, organizations, and monetary amounts
+2. Named entities: person names, dates, organizations, monetary amounts, and locations
 3. Overall sentiment classification (Positive, Negative, or Neutral)
+4. A confidence score (0-100) indicating how confident you are in the analysis
+5. The detected language of the document
 
-Be thorough in entity extraction - find ALL names, dates, organizations, and monetary amounts.
+Be thorough in entity extraction - find ALL names, dates, organizations, monetary amounts, and locations.
 For sentiment, consider the overall tone and content of the document.
-For summary, be concise but capture all key points.`;
+For summary, be concise but capture all key points.
+For confidence, consider text quality, clarity, and completeness.`;
 
   if (isImage) {
     return [
