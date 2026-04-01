@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Background3D from "@/components/Background3D";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   FileUp, Loader2, FileText, Image, File, Copy, CheckCircle2,
   LogOut, Sparkles, X, BarChart3, Users, Calendar, DollarSign,
-  Download, History, Trash2, Clock, ChevronDown, ChevronUp
+  Download, History, Trash2, Clock, ChevronDown, ChevronUp, MapPin, Globe, Gauge
 } from "lucide-react";
 
 interface AnalysisResult {
