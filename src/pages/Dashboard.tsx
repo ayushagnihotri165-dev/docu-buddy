@@ -517,7 +517,7 @@ ${Object.entries(result.entities).map(([key, values]) => `
               >
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-5">Extracted Entities</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {(["names", "dates", "organizations", "amounts"] as const).map((key, gi) => {
+                  {(["names", "dates", "organizations", "amounts", "locations"] as const).map((key, gi) => {
                     const Icon = entityIcons[key];
                     return (
                       <motion.div
