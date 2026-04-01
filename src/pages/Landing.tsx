@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Background3D from "@/components/Background3D";
+import ThemeToggle from "@/components/ThemeToggle";
+import TypingAnimation from "@/components/TypingAnimation";
 import {
   FileText, Brain, Shield, Zap, Layers, BarChart3,
   ArrowRight, Sparkles, ChevronRight, FileSearch, Download, History, Eye
