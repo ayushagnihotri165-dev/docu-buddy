@@ -50,8 +50,13 @@ serve(async (req) => {
       extractedText = extractTextFromPDF(fileBytes);
     } else if (ft === "docx") {
       extractedText = await extractTextFromDOCX(fileBytes);
+    } else if (ft === "spreadsheet") {
+      extractedText = extractTextFromSpreadsheet(fileBytes, fileName);
+    } else if (ft === "presentation") {
+      extractedText = await extractTextFromPresentation(fileBytes);
+    } else if (ft === "text") {
+      extractedText = new TextDecoder("utf-8").decode(fileBytes);
     } else if (ft === "image") {
-      // For images, we'll send the base64 directly to the AI model for OCR
       extractedText = `[IMAGE_BASE64:${fileBase64}]`;
     }
 
