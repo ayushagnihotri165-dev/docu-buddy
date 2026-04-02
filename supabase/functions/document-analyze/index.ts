@@ -31,9 +31,9 @@ serve(async (req) => {
       });
     }
 
-    const validTypes = ["pdf", "docx", "image"];
+    const validTypes = ["pdf", "docx", "image", "spreadsheet", "presentation", "text"];
     if (!validTypes.includes(fileType.toLowerCase())) {
-      return new Response(JSON.stringify({ status: "error", message: "Invalid fileType. Must be pdf, docx, or image" }), {
+      return new Response(JSON.stringify({ status: "error", message: "Invalid fileType. Must be pdf, docx, image, spreadsheet, presentation, or text" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -50,8 +50,13 @@ serve(async (req) => {
       extractedText = extractTextFromPDF(fileBytes);
     } else if (ft === "docx") {
       extractedText = await extractTextFromDOCX(fileBytes);
+    } else if (ft === "spreadsheet") {
+      extractedText = extractTextFromSpreadsheet(fileBytes, fileName);
+    } else if (ft === "presentation") {
+      extractedText = await extractTextFromPresentation(fileBytes);
+    } else if (ft === "text") {
+      extractedText = new TextDecoder("utf-8").decode(fileBytes);
     } else if (ft === "image") {
-      // For images, we'll send the base64 directly to the AI model for OCR
       extractedText = `[IMAGE_BASE64:${fileBase64}]`;
     }
 
@@ -402,4 +407,93 @@ For confidence, consider text quality, clarity, and completeness.`;
       content: `Analyze this document "${fileName}". Here is the extracted text content:\n\n${extractedText}\n\nProvide a comprehensive analysis with summary, entities, and sentiment.`
     }
   ];
+}
+
+function extractTextFromSpreadsheet(bytes: Uint8Array, fileName: string): string {
+  const ext = fileName.split(".").pop()?.toLowerCase();
+  
+  if (ext === "csv") {
+    return new TextDecoder("utf-8").decode(bytes);
+  }
+  
+  // For XLSX/XLS - extract shared strings and sheet data from ZIP
+  return extractXLSXText(bytes);
+}
+
+function extractXLSXText(bytes: Uint8Array): string {
+  const parts: string[] = [];
+  
+  // Try to extract shared strings XML
+  const sharedStrings = extractXMLFromZipSync(bytes, "xl/sharedStrings.xml");
+  const stringValues: string[] = [];
+  
+  if (sharedStrings) {
+    const matches = sharedStrings.match(/<t[^>]*>([^<]+)<\/t>/g);
+    if (matches) {
+      for (const m of matches) {
+        const val = m.replace(/<[^>]+>/g, "").trim();
+        if (val) stringValues.push(val);
+      }
+    }
+  }
+  
+  if (stringValues.length > 0) {
+    parts.push(stringValues.join("\t"));
+  }
+  
+  // Try sheet1
+  const sheet1 = extractXMLFromZipSync(bytes, "xl/worksheets/sheet1.xml");
+  if (sheet1) {
+    const values = sheet1.match(/<v>([^<]+)<\/v>/g);
+    if (values) {
+      parts.push(values.map(v => v.replace(/<[^>]+>/g, "")).join("\t"));
+    }
+  }
+  
+  return parts.join("\n") || "[Unable to extract text from spreadsheet]";
+}
+
+function extractXMLFromZipSync(zipBytes: Uint8Array, targetFile: string): string | null {
+  const view = new DataView(zipBytes.buffer, zipBytes.byteOffset, zipBytes.byteLength);
+  let offset = 0;
+
+  while (offset < zipBytes.length - 4) {
+    const signature = view.getUint32(offset, true);
+    if (signature !== 0x04034b50) { offset++; continue; }
+
+    const compressionMethod = view.getUint16(offset + 8, true);
+    const compressedSize = view.getUint32(offset + 18, true);
+    const uncompressedSize = view.getUint32(offset + 22, true);
+    const fileNameLength = view.getUint16(offset + 26, true);
+    const extraFieldLength = view.getUint16(offset + 28, true);
+    const fileNameBytes = zipBytes.slice(offset + 30, offset + 30 + fileNameLength);
+    const fileName = new TextDecoder().decode(fileNameBytes);
+    const dataOffset = offset + 30 + fileNameLength + extraFieldLength;
+
+    if (fileName === targetFile && compressionMethod === 0) {
+      return new TextDecoder().decode(zipBytes.slice(dataOffset, dataOffset + compressedSize));
+    }
+
+    offset = dataOffset + compressedSize;
+    if (compressedSize === 0 && uncompressedSize === 0) offset = dataOffset + 1;
+  }
+  return null;
+}
+
+async function extractTextFromPresentation(bytes: Uint8Array): Promise<string> {
+  const parts: string[] = [];
+  
+  // PPTX is a ZIP with ppt/slides/slide*.xml
+  for (let i = 1; i <= 50; i++) {
+    const slideXml = await extractXMLFromZip(bytes, `ppt/slides/slide${i}.xml`);
+    if (!slideXml) break;
+    
+    const texts = slideXml.match(/<a:t>([^<]*)<\/a:t>/g);
+    if (texts) {
+      const slideText = texts.map(t => t.replace(/<[^>]+>/g, "")).join(" ");
+      if (slideText.trim()) parts.push(`Slide ${i}: ${slideText.trim()}`);
+    }
+  }
+  
+  return parts.join("\n\n") || "[Unable to extract text from presentation]";
 }

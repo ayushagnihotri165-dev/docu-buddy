@@ -7,10 +7,13 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Background3D from "@/components/Background3D";
 import ThemeToggle from "@/components/ThemeToggle";
+import AIAssistant from "@/components/AIAssistant";
+import AnalysisSkeleton from "@/components/AnalysisSkeleton";
 import {
   FileUp, Loader2, FileText, Image, File, Copy, CheckCircle2,
   LogOut, Sparkles, X, BarChart3, Users, Calendar, DollarSign,
-  Download, History, Trash2, Clock, ChevronDown, ChevronUp, MapPin, Globe, Gauge
+  Download, History, Trash2, Clock, ChevronDown, ChevronUp, MapPin, Globe, Gauge,
+  FileSpreadsheet, Presentation, FileCode
 } from "lucide-react";
 
 interface AnalysisResult {
@@ -120,14 +123,20 @@ const Dashboard = () => {
   const getFileType = (f: File): string => {
     const ext = f.name.split(".").pop()?.toLowerCase();
     if (ext === "pdf") return "pdf";
-    if (ext === "docx") return "docx";
-    if (["png", "jpg", "jpeg", "gif", "bmp", "webp", "tiff"].includes(ext || "")) return "image";
+    if (["docx", "doc"].includes(ext || "")) return "docx";
+    if (["xlsx", "xls", "csv"].includes(ext || "")) return "spreadsheet";
+    if (["pptx", "ppt"].includes(ext || "")) return "presentation";
+    if (["txt", "rtf", "md", "html", "xml", "json"].includes(ext || "")) return "text";
+    if (["png", "jpg", "jpeg", "gif", "bmp", "webp", "tiff", "svg"].includes(ext || "")) return "image";
     return "unknown";
   };
 
   const getFileIcon = (type: string) => {
     if (type === "pdf") return <FileText className="w-5 h-5" />;
     if (type === "image") return <Image className="w-5 h-5" />;
+    if (type === "spreadsheet") return <FileSpreadsheet className="w-5 h-5" />;
+    if (type === "presentation") return <Presentation className="w-5 h-5" />;
+    if (type === "text") return <FileCode className="w-5 h-5" />;
     return <File className="w-5 h-5" />;
   };
 
@@ -308,7 +317,7 @@ ${Object.entries(result.entities).map(([key, values]) => `
             onDrop={handleDrop}
             onClick={() => document.getElementById("file-input")?.click()}
           >
-            <input id="file-input" type="file" className="hidden" accept=".pdf,.docx,.png,.jpg,.jpeg,.gif,.bmp,.webp,.tiff" onChange={handleFileChange} />
+            <input id="file-input" type="file" className="hidden" accept=".pdf,.docx,.doc,.xlsx,.xls,.csv,.pptx,.ppt,.txt,.rtf,.md,.html,.xml,.json,.png,.jpg,.jpeg,.gif,.bmp,.webp,.tiff,.svg" onChange={handleFileChange} />
             <div className="p-12 text-center">
               <motion.div
                 animate={{ y: dragOver ? -8 : 0, rotate: dragOver ? 5 : 0 }}
@@ -329,7 +338,7 @@ ${Object.entries(result.entities).map(([key, values]) => `
               ) : (
                 <>
                   <p className="text-muted-foreground mb-1 font-medium">Drop a document here or click to browse</p>
-                  <p className="text-xs text-muted-foreground">Supports PDF, DOCX, PNG, JPG, JPEG, GIF, BMP, WebP, TIFF</p>
+                  <p className="text-xs text-muted-foreground">Supports PDF, DOCX, XLSX, PPTX, TXT, CSV, RTF, PNG, JPG, and more</p>
                 </>
               )}
             </div>
@@ -431,6 +440,11 @@ ${Object.entries(result.entities).map(([key, values]) => `
               </div>
             </motion.div>
           )}
+        </AnimatePresence>
+
+        {/* Loading Skeleton */}
+        <AnimatePresence>
+          {loading && !result && <AnalysisSkeleton />}
         </AnimatePresence>
 
         {/* Results */}
@@ -563,6 +577,7 @@ ${Object.entries(result.entities).map(([key, values]) => `
           )}
         </AnimatePresence>
       </main>
+      <AIAssistant />
     </div>
   );
 };
