@@ -317,7 +317,7 @@ ${Object.entries(result.entities).map(([key, values]) => `
             onDrop={handleDrop}
             onClick={() => document.getElementById("file-input")?.click()}
           >
-            <input id="file-input" type="file" className="hidden" accept=".pdf,.docx,.png,.jpg,.jpeg,.gif,.bmp,.webp,.tiff" onChange={handleFileChange} />
+            <input id="file-input" type="file" className="hidden" accept=".pdf,.docx,.doc,.xlsx,.xls,.csv,.pptx,.ppt,.txt,.rtf,.md,.html,.xml,.json,.png,.jpg,.jpeg,.gif,.bmp,.webp,.tiff,.svg" onChange={handleFileChange} />
             <div className="p-12 text-center">
               <motion.div
                 animate={{ y: dragOver ? -8 : 0, rotate: dragOver ? 5 : 0 }}
