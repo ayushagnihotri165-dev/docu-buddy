@@ -275,3 +275,20 @@
 .glow-border-animate {
   animation: glowBorder 4s ease-in-out infinite;
 }
+
+/* Shimmer skeleton effect */
+@keyframes shimmerSlide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.shimmer-effect {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(var(--primary) / 0.08) 20%,
+    hsl(var(--primary) / 0.15) 50%,
+    hsl(var(--primary) / 0.08) 80%,
+    transparent 100%
+  );
+  animation: shimmerSlide 1.8s ease-in-out infinite;
+}
