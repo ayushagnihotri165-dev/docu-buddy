@@ -11,6 +11,7 @@ import {
   ArrowRight, Sparkles, ChevronRight, FileSearch, Download, History, Eye
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
+import AnimatedCounter from "@/components/AnimatedCounter";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -143,21 +144,12 @@ const Landing = () => {
             </a>
           </motion.div>
 
-          {/* Stats */}
-          <motion.div
-            variants={fadeUp} initial="hidden" animate="visible" custom={4}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6"
-          >
+          {/* Stats with animated counters */}
+          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((s, i) => (
-              <motion.div key={i} variants={scaleIn} initial="hidden" animate="visible" custom={i + 5}
-                whileHover={{ scale: 1.05, y: -4 }}
-                className="glass rounded-2xl p-5 text-center transition-all duration-300 hover:shadow-glow"
-              >
-                <div className="text-2xl md:text-3xl font-bold color-cycle">{s.value}</div>
-                <div className="text-xs text-muted-foreground mt-1">{s.label}</div>
-              </motion.div>
+              <AnimatedCounter key={i} value={s.value} label={s.label} index={i} />
             ))}
-          </motion.div>
+          </div>
         </motion.div>
       </section>
 
