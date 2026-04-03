@@ -7,9 +7,10 @@ import Background3D from "@/components/Background3D";
 import ThemeToggle from "@/components/ThemeToggle";
 import TypingAnimation from "@/components/TypingAnimation";
 import {
-  FileText, Brain, Shield, Zap, Layers, BarChart3,
+  Brain, Shield, Zap, Layers, BarChart3,
   ArrowRight, Sparkles, ChevronRight, FileSearch, Download, History, Eye
 } from "lucide-react";
+import logoImg from "@/assets/logo.png";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
