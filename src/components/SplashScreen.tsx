@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText, Sparkles, Zap, Brain } from "lucide-react";
+import { Sparkles, Zap, Brain } from "lucide-react";
+import logoImg from "@/assets/logo.png";
 
 const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [phase, setPhase] = useState(0);
