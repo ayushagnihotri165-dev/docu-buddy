@@ -11,6 +11,7 @@ import {
   ArrowRight, Sparkles, ChevronRight, FileSearch, Download, History, Eye
 } from "lucide-react";
 import logoImg from "@/assets/logo.png";
+import AnimatedCounter from "@/components/AnimatedCounter";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
