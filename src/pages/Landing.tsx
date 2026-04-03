@@ -331,9 +331,7 @@ const Landing = () => {
       <footer className="relative z-10 border-t border-border/50 py-10 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <FileText className="w-3.5 h-3.5 text-primary-foreground" />
-            </div>
+            <img src={logoImg} alt="DocAnalyzer" className="w-7 h-7 rounded-lg object-contain" />
             <span className="text-sm font-semibold">DocAnalyzer</span>
           </div>
           <p className="text-xs text-muted-foreground">© 2026 DocAnalyzer. All rights reserved.</p>
